@@ -1,17 +1,26 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "./Layout";
+import HomePage from "../pages/HomePage"
+import ProdutosPage from "../pages/ProdutosPage";
+import ProdutoPage from "../pages/ProdutoPage";
+import LoginPage from "../pages/LoginPage";
+import ContatosPage from "../pages/ContatosPage";
+
 
 const router = createBrowserRouter(
   [
     {
-      path: "desweb/",
+      path: "/desweb/",
       element: <Layout />,
-
-
-
+      children: [
+        { path: "", element: <HomePage /> },
+        { path: "produtos", element: <ProdutosPage /> },
+        { path: "produto/:id", element: <ProdutoPage /> },
+        { path: "login", element: <LoginPage /> },
+        { path: "contatos", element: <ContatosPage /> }
+      ]
     }
   ]
-
 );
 
 export default router;
