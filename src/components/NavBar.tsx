@@ -1,12 +1,12 @@
 import { NavLink } from "react-router-dom"
-
+import Logo from "../assets/logo.png"
 const NavBar = () => {
   return (
-    <nav className="navbar navbar-expand-lg  bg-success  navbar-dark">
+    <nav className="navbar navbar-expand-lg  navbar-dark" style={{ backgroundColor: "#1B4F72" }}>
       <div className="container">
-        <NavLink className="navbar-brand" to={"/desweb/"}>
+        <NavLink className="navbar-brand" aria-current="page" to={"/desweb"}>
           <img
-            src="" alt="logo" style={{ width: "50px" }}
+            src={Logo} alt="logo" style={{ width: "50px" }}
           />
 
         </NavLink>
@@ -28,8 +28,8 @@ const NavBar = () => {
                 Home
               </NavLink>
             </li>
-            <li className="nav-item dropdown">
-              <NavLink className="nav-link dropdown-toggle" aria-current="page" to="/desweb/produtos">
+            <li className="nav-item">
+              <NavLink className="nav-link" aria-current="page" to="/desweb/produtos">
                 Produtos
               </NavLink>
             </li>
