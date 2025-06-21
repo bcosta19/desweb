@@ -12,6 +12,7 @@ const router = createBrowserRouter(
     {
       path: "/desweb/",
       element: <Layout />,
+      errorElement: <div>Erro ao carregar a página</div>,
       children: [
         { path: "", element: <HomePage /> },
         { path: "produtos", element: <ProdutosPage /> },
