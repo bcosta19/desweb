@@ -11,19 +11,19 @@ const HomePage = () => {
             Todos
           </NavLink>
 
-          <NavLink className="nav-link" to="/varas">
+          <NavLink className="nav-link" to="/desweb/varas">
             Varas
           </NavLink>
 
-          <NavLink className="nav-link" to="/linhas">
+          <NavLink className="nav-link" to="/desweb/linhas">
             Linhas
           </NavLink>
 
-          <NavLink className="nav-link" to="/carretilhas">
+          <NavLink className="nav-link" to="/desweb/carretilhas">
             Carretilhas
           </NavLink>
 
-          <NavLink className="nav-link" to="/chumbadas">
+          <NavLink className="nav-link" to="/desweb/chumbadas">
             Chumbadas
           </NavLink>
         </nav>
@@ -33,9 +33,6 @@ const HomePage = () => {
       </div>
 
     </div>
-
-
-
   )
 }
 

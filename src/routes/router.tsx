@@ -5,6 +5,7 @@ import ProdutosPage from "../pages/ProdutosPage";
 import ProdutoPage from "../pages/ProdutoPage";
 import LoginPage from "../pages/LoginPage";
 import ContatosPage from "../pages/ContatosPage";
+import CardsPorSlugCategoriaPage from "../pages/CardsPorSlugCategoriaPage";
 
 
 const router = createBrowserRouter(
@@ -14,7 +15,17 @@ const router = createBrowserRouter(
       element: <Layout />,
       errorElement: <div>Erro ao carregar a página</div>,
       children: [
-        { path: "", element: <HomePage /> },
+        {
+          path: "",
+          element: <HomePage />,
+          children: [
+            {
+              path: ":slugCategoria?",
+              element: <CardsPorSlugCategoriaPage />
+
+            }
+          ]
+        },
         { path: "produtos", element: <ProdutosPage /> },
         { path: "produto/:id", element: <ProdutoPage /> },
         { path: "login", element: <LoginPage /> },
