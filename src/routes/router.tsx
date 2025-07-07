@@ -21,17 +21,16 @@ const router = createBrowserRouter(
           children: [
             {
               path: ":slugCategoria?",
-              element: <CardsPorSlugCategoriaPage />
-
-            }
-          ]
+              element: <CardsPorSlugCategoriaPage />,
+            },
+          ],
         },
         { path: "produtos", element: <ProdutosPage /> },
         { path: "produto/:id", element: <ProdutoPage /> },
         { path: "login", element: <LoginPage /> },
-        { path: "contatos", element: <ContatosPage /> }
-      ]
-    }
+        { path: "contatos", element: <ContatosPage /> },
+      ],
+    },
   ]
 );
 

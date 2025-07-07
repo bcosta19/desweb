@@ -11,7 +11,7 @@ interface Props {
 const Card = ({ produto, adicionarProduto, subtrairProduto, produtoNoCarrinho }: Props) => {
   return (
     <div className="card h-100 border-0">
-      <img src={produto.imagem} className="card-img-top" alt={produto.nome} />
+      <img src={`${produto.imagem}`} className="card-img-top" alt={produto.nome} />
       <div className="card-body">
         <h5 className="card-title">{produto.nome}</h5>
         <p className="card-text">{produto.descricao}</p>

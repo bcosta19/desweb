@@ -7,11 +7,12 @@ const vara: Categoria = { id: 1, nome: "Varas", slug: "vara" }
 const linha: Categoria = { id: 2, nome: "Linhas", slug: "linha" }
 const carretilha: Categoria = { id: 3, nome: "Carretilhas", slug: "carretilha" }
 const chumbada: Categoria = { id: 4, nome: "Chumbadas", slug: "chumbada" }
+const url = "/desweb/imagens";
 const produtos: Produto[] = [
   // Varas
   {
     id: 1,
-    imagem: "imagens/vara1.jpg",
+    imagem: url + "/vara1.jpg",
     categoria: vara,
     nome: "Vara de Pesca Shimano FX",
     slug: "vara-shimano-fx",
@@ -23,7 +24,7 @@ const produtos: Produto[] = [
   },
   {
     id: 2,
-    imagem: "imagens/vara2.jpg",
+    imagem: url + "/vara2.jpg",
     categoria: vara,
     nome: "Vara Marine Sports Solara",
     slug: "vara-marine-sports-solara",
@@ -35,7 +36,7 @@ const produtos: Produto[] = [
   },
   {
     id: 3,
-    imagem: "imagens/vara3.jpg",
+    imagem: url + "/vara3.jpg",
     categoria: vara,
     nome: "Vara Saint Plus Evolution",
     slug: "vara-saint-plus-evolution",
@@ -47,11 +48,11 @@ const produtos: Produto[] = [
   },
   {
     id: 4,
-    imagem: "imagens/vara4.jpg",
+    imagem: url + "/vara4.jpg",
     categoria: vara,
     nome: "Vara Daiwa Laguna",
     slug: "vara-daiwa-laguna",
-    descricao: "Design moderno e ótimo desempenho em pescarias costeiras.",
+    descricao: "Desmoderno e ótimo desempenho em pescarias costeiras.",
     disponivel: false,
     dataCadastro: new Date(),
     qtdEstoque: 0,
@@ -59,7 +60,7 @@ const produtos: Produto[] = [
   },
   {
     id: 5,
-    imagem: "imagens/vara5.jpg",
+    imagem: url + "/vara5.jpg",
     categoria: vara,
     nome: "Vara Albatroz Black Fish",
     slug: "vara-albatroz-black-fish",
@@ -67,13 +68,13 @@ const produtos: Produto[] = [
     disponivel: true,
     dataCadastro: new Date(),
     qtdEstoque: 10,
-    preco: 169.90,
+    preco: 16.90,
   },
 
   // Linhas
   {
     id: 6,
-    imagem: "imagens/linha1.jpg",
+    imagem: url + "/linha1.jpg",
     categoria: linha,
     nome: "Linha Monofilamento Araty",
     slug: "linha-monofilamento-araty",
@@ -85,7 +86,7 @@ const produtos: Produto[] = [
   },
   {
     id: 7,
-    imagem: "imagens/linha2.jpg",
+    imagem: url + "/linha2.jpg",
     categoria: linha,
     nome: "Linha Multifilamento Power Pro",
     slug: "linha-multifilamento-power-pro",
@@ -97,7 +98,7 @@ const produtos: Produto[] = [
   },
   {
     id: 8,
-    imagem: "imagens/linha3.jpg",
+    imagem: url + "/linha3.jpg",
     categoria: linha,
     nome: "Linha Fluorocarbono Seaguar",
     slug: "linha-fluorocarbono-seaguar",
@@ -109,7 +110,7 @@ const produtos: Produto[] = [
   },
   {
     id: 9,
-    imagem: "imagens/linha4.jpg",
+    imagem: url + "/linha4.jpg",
     categoria: linha,
     nome: "Linha de Pesca Maruri Max Force",
     slug: "linha-maruri-max-force",
@@ -121,7 +122,7 @@ const produtos: Produto[] = [
   },
   {
     id: 10,
-    imagem: "imagens/linha5.jpg",
+    imagem: url + "/linha5.jpg",
     categoria: linha,
     nome: "Linha YGK G-soul Upgrade",
     slug: "linha-ygk-g-soul-upgrade",
@@ -135,7 +136,7 @@ const produtos: Produto[] = [
   // Carretilhas
   {
     id: 11,
-    imagem: "imagens/carretilha1.jpg",
+    imagem: url + "/carretilha1.jpg",
     categoria: carretilha,
     nome: "Carretilha Shimano SLX",
     slug: "carretilha-shimano-slx",
@@ -147,7 +148,7 @@ const produtos: Produto[] = [
   },
   {
     id: 12,
-    imagem: "imagens/carretilha2.jpg",
+    imagem: url + "/carretilha2.jpg",
     categoria: carretilha,
     nome: "Carretilha Daiwa Fuego",
     slug: "carretilha-daiwa-fuego",
@@ -159,7 +160,7 @@ const produtos: Produto[] = [
   },
   {
     id: 13,
-    imagem: "imagens/carretilha3.jpg",
+    imagem: url + "/carretilha3.jpg",
     categoria: carretilha,
     nome: "Carretilha Marine Sports Titan",
     slug: "carretilha-marine-sports-titan",
@@ -171,7 +172,7 @@ const produtos: Produto[] = [
   },
   {
     id: 14,
-    imagem: "imagens/carretilha4.jpg",
+    imagem: url + "/carretilha4.jpg",
     categoria: carretilha,
     nome: "Carretilha Abu Garcia Revo",
     slug: "carretilha-abu-garcia-revo",
@@ -183,7 +184,7 @@ const produtos: Produto[] = [
   },
   {
     id: 15,
-    imagem: "imagens/carretilha5.jpg",
+    imagem: url + "/carretilha5.jpg",
     categoria: carretilha,
     nome: "Carretilha Albatroz Fire",
     slug: "carretilha-albatroz-fire",
@@ -197,7 +198,7 @@ const produtos: Produto[] = [
   // Chumbadas
   {
     id: 16,
-    imagem: "imagens/chumbada1.jpg",
+    imagem: url + "/chumbada1.jpg",
     categoria: chumbada,
     nome: "Chumbada Pirâmide 50g",
     slug: "chumbada-piramide-50g",
@@ -209,7 +210,7 @@ const produtos: Produto[] = [
   },
   {
     id: 17,
-    imagem: "imagens/chumbada2.jpg",
+    imagem: url + "/chumbada2.jpg",
     categoria: chumbada,
     nome: "Chumbada Oliva 30g",
     slug: "chumbada-oliva-30g",
@@ -221,7 +222,7 @@ const produtos: Produto[] = [
   },
   {
     id: 18,
-    imagem: "imagens/chumbada3.jpg",
+    imagem: url + "/chumbada3.jpg",
     categoria: chumbada,
     nome: "Chumbada Bola 100g",
     slug: "chumbada-bola-100g",
@@ -233,7 +234,7 @@ const produtos: Produto[] = [
   },
   {
     id: 19,
-    imagem: "imagens/chumbada4.jpg",
+    imagem: url + "/chumbada4.jpg",
     categoria: chumbada,
     nome: "Chumbada Disco 80g",
     slug: "chumbada-disco-80g",
@@ -245,7 +246,7 @@ const produtos: Produto[] = [
   },
   {
     id: 20,
-    imagem: "imagens/chumbada5.jpg",
+    imagem: url + "/chumbada5.jpg",
     categoria: chumbada,
     nome: "Chumbada Palito 20g",
     slug: "chumbada-palito-20g",

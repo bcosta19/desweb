@@ -40,8 +40,8 @@ const useRecuperarProdutosPorSlugCategoriaComPaginacao = (queryString: QueryStri
 
 
     // Paginação 
-    const pagina = parseInt(queryStringComPagina.pagina);
-    const tamanho = parseInt(queryStringComPagina.tamanho);
+    const pagina = parseInt(queryStringComPagina.pagina, 10);
+    const tamanho = parseInt(queryStringComPagina.tamanho, 10);
     const totalDePaginas = Math.ceil(produtosFiltrados.length / tamanho);
 
     const inicio = pagina * tamanho;
@@ -66,7 +66,7 @@ const useRecuperarProdutosPorSlugCategoriaComPaginacao = (queryString: QueryStri
     staleTime: 0,
     placeholderData: keepPreviousData,
     initialPageParam: 0,
-    getnextPageParam: (ultimaPagina) => {
+    getNextPageParam: (ultimaPagina) => {
       return ultimaPagina.paginaCorrente < ultimaPagina.totalDePaginas - 1 ? ultimaPagina.paginaCorrente + 1 : undefined;
     }
 
