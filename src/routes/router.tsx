@@ -11,7 +11,7 @@ import CardsPorSlugCategoriaPage from "../pages/CardsPorSlugCategoriaPage";
 const router = createBrowserRouter(
   [
     {
-      path: "/desweb/",
+      path: "/",
       element: <Layout />,
       errorElement: <div>Erro ao carregar a página</div>,
       children: [

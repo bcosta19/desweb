@@ -7,7 +7,7 @@ const vara: Categoria = { id: 1, nome: "Varas", slug: "vara" }
 const linha: Categoria = { id: 2, nome: "Linhas", slug: "linha" }
 const carretilha: Categoria = { id: 3, nome: "Carretilhas", slug: "carretilha" }
 const chumbada: Categoria = { id: 4, nome: "Chumbadas", slug: "chumbada" }
-const url = "/desweb/imagens";
+const url = "/imagens";
 const produtos: Produto[] = [
   // Varas
   {

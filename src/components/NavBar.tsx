@@ -24,17 +24,17 @@ const NavBar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
-              <NavLink className="nav-link" aria-current="page" to="/desweb/" end>
+              <NavLink className="nav-link" aria-current="page" to="/" end>
                 Home
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" aria-current="page" to="/desweb/produtos">
+              <NavLink className="nav-link" aria-current="page" to="/produtos">
                 Produtos
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" aria-current="page" to="/desweb/contatos">
+              <NavLink className="nav-link" aria-current="page" to="/contatos">
                 Contatos
               </NavLink>
             </li>
@@ -42,7 +42,7 @@ const NavBar = () => {
 
           <ul className="navbar-nav">
             <li className="nav-item">
-              <NavLink className="nav-link" aria-current="page" to="/desweb/login">
+              <NavLink className="nav-link" aria-current="page" to="/login">
                 Login
               </NavLink>
             </li>
