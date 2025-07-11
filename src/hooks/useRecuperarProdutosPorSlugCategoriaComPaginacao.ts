@@ -54,6 +54,9 @@ const useRecuperarProdutosPorSlugCategoriaComPaginacao = (queryString: QueryStri
       totalDePaginas: totalDePaginas,
       itens: itensPaginados
     }
+
+    console.log("slugCategoria recebida =", queryStringComPagina.slugCategoria);
+    console.log("Todos os slugs disponíveis =", produtos.map(p => p.categoria.slug));
     return resultado;
 
   }
@@ -63,7 +66,8 @@ const useRecuperarProdutosPorSlugCategoriaComPaginacao = (queryString: QueryStri
       pagina: pageParam.toString(),
       ...queryString
     }),
-    staleTime: 0,
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 30 * 1,
     placeholderData: keepPreviousData,
     initialPageParam: 0,
     getNextPageParam: (ultimaPagina) => {
