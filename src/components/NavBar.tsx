@@ -4,7 +4,7 @@ const NavBar = () => {
   return (
     <nav className="navbar navbar-expand-lg  navbar-dark" style={{ backgroundColor: "#1B4F72" }}>
       <div className="container">
-        <NavLink className="navbar-brand" aria-current="page" to={"/desweb/"}>
+        <NavLink className="navbar-brand" aria-current="page" to={"/"}>
           <img
             src={Logo} alt="logo" style={{ width: "50px" }}
           />
