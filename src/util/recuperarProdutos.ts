@@ -3,10 +3,10 @@
 import { Categoria } from "../interface/Categoria";
 import { Produto } from "../interface/Produto";
 
-const vara: Categoria = { id: 1, nome: "Varas", slug: "vara" }
-const linha: Categoria = { id: 2, nome: "Linhas", slug: "linha" }
-const carretilha: Categoria = { id: 3, nome: "Carretilhas", slug: "carretilha" }
-const chumbada: Categoria = { id: 4, nome: "Chumbadas", slug: "chumbada" }
+const vara: Categoria = { id: 1, nome: "Varas", slug: "varas" }
+const linha: Categoria = { id: 2, nome: "Linhas", slug: "linhas" }
+const carretilha: Categoria = { id: 3, nome: "Carretilhas", slug: "carretilhas" }
+const chumbada: Categoria = { id: 4, nome: "Chumbadas", slug: "chumbadas" }
 const url = "/imagens";
 const produtos: Produto[] = [
   // Varas
@@ -263,7 +263,7 @@ const recuperarProdutos = () => {
   return new Promise<Produto[]>((resolve) => {
     setTimeout(() => {
       resolve(produtos);
-    }, 2000)
+    }, 0)
   })
   // return produtos;
 }
