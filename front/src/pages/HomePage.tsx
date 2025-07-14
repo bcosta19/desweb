@@ -7,7 +7,7 @@ const HomePage = () => {
       <div className="col-lg-2">
         <nav className="nav nav-pills d-flex flex-column">
           <h5>Categorias</h5>
-          <NavLink className="nav-link" aria-current="page" to="">
+          <NavLink className="nav-link" aria-current="page" to="/">
             Todos
           </NavLink>
           <NavLink className="nav-link" to="/varas/">
