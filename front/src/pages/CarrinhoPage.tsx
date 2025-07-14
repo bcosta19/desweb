@@ -120,6 +120,17 @@ const CarrinhoPage = () => {
                             alterarQuantidade(produto.id, parseInt(e.target.value));
                           }
                         }}
+                        onBlur={(e) => {
+                          const valor = e.target.value;
+                          const destino = e.relatedTarget as HTMLElement | null;
+
+                          const clicouRemover = destino?.dataset?.action === "remove" && destino?.dataset?.id === String(produto.id);
+
+                          if (valor === "" && clicouRemover) {
+                            e.target.focus();
+                          }
+
+                        }}
 
                         className="form-control form-control-sm text-center"
                         style={{ width: 60 }}
@@ -130,6 +141,8 @@ const CarrinhoPage = () => {
                   <td>
                     <button
                       className="btn btn-sm btn-danger"
+                      data-action="remove"
+                      data-id={produto.id}
                       onClick={() => removerProduto(produto.id)}
                     >
                       Remover

@@ -263,7 +263,7 @@ const recuperarProdutos = () => {
   return new Promise<Produto[]>((resolve) => {
     setTimeout(() => {
       resolve(produtos);
-    }, 0)
+    }, 2000)
   })
   // return produtos;
 }

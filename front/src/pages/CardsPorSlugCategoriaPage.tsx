@@ -4,6 +4,7 @@ import useRecuperarProdutosPorSlugCategoriaComPaginacao from "../hooks/useRecupe
 import Card from "../components/Card";
 import { useEffect, useState } from "react";
 import type { Produto } from "../interface/Produto";
+import CardsPlaceholderPage from "./CardsPlaceHolder";
 
 export interface ProdCarrinho {
   idProduto: number;
@@ -82,7 +83,7 @@ const CardsPorSlugCategoriaPage = () => {
 
   console.log("data = ", data);
 
-  if (carregandoProdutos) return <p>Carregando...</p>; // Adicionar placeholder
+  if (carregandoProdutos) return <CardsPlaceholderPage />; // Adicionar placeholder
   if (errorProdutos) return <p>Erro ao carregar os produtos: {errorProdutos.message}</p>;
 
   const produtosNoCarrinho: (ProdCarrinho | null)[] = [];
