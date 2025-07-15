@@ -5,6 +5,7 @@ import Card from "../components/Card";
 import { useEffect, useState } from "react";
 import type { Produto } from "../interface/Produto";
 import CardsPlaceholderPage from "./CardsPlaceHolder";
+import useCarrinho from "../hooks/useCarrinho";
 
 export interface ProdCarrinho {
   idProduto: number;
@@ -14,89 +15,52 @@ export interface ProdCarrinho {
 const CardsPorSlugCategoriaPage = () => {
   const tamanho = 10; // Definindo o tamanho da página para 10 itens
 
-  const [carrinho, setCarrinho] = useState(() => {
-    const itensDeCarrinho = localStorage.getItem("carrinho");
-    return itensDeCarrinho ? JSON.parse(itensDeCarrinho) : [];
-  })
-
-  console.log("carrinho = ", carrinho);
-
-  useEffect(() => {
-    localStorage.setItem("carrinho", JSON.stringify(carrinho));
-  }, [carrinho]);
-
-
-  const adicionarProduto = (produto: Produto) => {
-    setCarrinho((prevCarrinho: ProdCarrinho[]) => {
-      const existe = prevCarrinho.find((item) => item.idProduto === produto.id);
-      if (existe) {
-        // existe.quantidade = existe.quantidade + 1;  Isso não funciona
-        // return prevCarrinho;
-        const novoCarrinho: ProdCarrinho[] = prevCarrinho.map(
-          (item: ProdCarrinho) =>
-            item.idProduto === produto.id
-              ? { idProduto: item.idProduto, quantidade: item.quantidade + 1 }
-              : item
-        );
-        return novoCarrinho;
-      } else {
-        return [...prevCarrinho, { idProduto: produto.id, quantidade: 1 }];
-      }
-    });
-  };
-
-  const subtrairProduto = (produto: Produto) => {
-    setCarrinho((prevCarrinho: ProdCarrinho[]) => {
-      const existe = prevCarrinho.find((item) => item.idProduto === produto.id);
-      if (existe) {
-        // existe.quantidade = existe.quantidade + 1;  Isso não funciona
-        // return prevCarrinho;
-        const novoCarrinho: ProdCarrinho[] = prevCarrinho.map(
-          (item: ProdCarrinho) =>
-            item.idProduto === produto.id
-              ? { idProduto: item.idProduto, quantidade: item.quantidade - 1 }
-              : item
-        );
-        return novoCarrinho.filter((item) => item.quantidade > 0);
-      } else {
-        return prevCarrinho;
-      }
-    });
-  };
-
   const { slugCategoria } = useParams<{ slugCategoria: string }>();
   const slug = slugCategoria ?? "";
-  console.log("slugCategoria = ", slugCategoria);
+
+  const {
+    produtos: produtosCarrinho,
+    carregando: carregandoCarrinho,
+    erro: erroCarrinho,
+    alterarQuantidade,
+    removerProduto,
+  } = useCarrinho();
+
   const {
     data,
     isPending: carregandoProdutos,
     error: errorProdutos,
     hasNextPage,
     fetchNextPage,
-    isFetchingNextPage
-
-  } = useRecuperarProdutosPorSlugCategoriaComPaginacao(
-    {
-      tamanho: tamanho.toString(),
-      slugCategoria: slug
-    });
-
-  console.log("data = ", data);
-
-  if (carregandoProdutos) return <CardsPlaceholderPage />; // Adicionar placeholder
-  if (errorProdutos) return <p>Erro ao carregar os produtos: {errorProdutos.message}</p>;
-
-  const produtosNoCarrinho: (ProdCarrinho | null)[] = [];
-  data.pages.forEach((page) => {
-    page.itens.forEach((produto) => {
-      const prodCarrinho = carrinho.find(
-        (item: ProdCarrinho) => item.idProduto === produto.id
-      );
-      produtosNoCarrinho.push(prodCarrinho ? prodCarrinho : null);
-    });
+  } = useRecuperarProdutosPorSlugCategoriaComPaginacao({
+    tamanho: tamanho.toString(),
+    slugCategoria: slug,
   });
 
-  console.log("produtos no carrinho = ", produtosNoCarrinho);
+  const adicionarProduto = (produto: Produto) => {
+    const produtoExistente = produtosCarrinho.find(p => p.id === produto.id);
+    const novaQuantidade = produtoExistente ? produtoExistente.quantidade + 1 : 1;
+
+    alterarQuantidade(produto.id, novaQuantidade);
+  }
+
+  const subtrairProduto = (produto: Produto) => {
+    const produtoExistente = produtosCarrinho.find(p => p.id === produto.id);
+    if (!produtoExistente) return;
+    const novaQuantidade = produtoExistente.quantidade - 1;
+    if (novaQuantidade <= 0) {
+      removerProduto(produto.id);
+    } else {
+      alterarQuantidade(produto.id, novaQuantidade);
+    }
+  };
+  console.log("carregandoCarrinho:", carregandoCarrinho);
+  console.log("produtos do carrinho:", produtosCarrinho);
+  console.log("data produtos:", data);
+  if (carregandoProdutos || carregandoCarrinho) return <CardsPlaceholderPage />; // Adicionar placeholder
+  if (errorProdutos) return <p>Erro ao carregar produtos</p>;
+  if (erroCarrinho) return <p>Erro ao carregar carrinho</p>;
+
 
   return (
     <InfiniteScroll
@@ -110,17 +74,20 @@ const CardsPorSlugCategoriaPage = () => {
         {slugCategoria ? slugCategoria.charAt(0).toUpperCase() + slugCategoria.slice(1) : "Produtos"}
       </h5>
       <div className="row">
-        {data.pages.map((page, pagina) =>
-          page.itens.map((produto, index) => (
-            <div key={produto.id} className="col-lg-2 col-md-3 col-sm-4 col-6">
-              <Card
-                produto={produto}
-                produtoNoCarrinho={carrinho.find((item) => item.idProduto === produto.id) ?? null}
-                adicionarProduto={adicionarProduto}
-                subtrairProduto={subtrairProduto}
-              />
-            </div>
-          ))
+        {data.pages.map((page) =>
+          page.itens.map((produto) => {
+            const produtoNoCarrinho = produtosCarrinho.find(p => p.id === produto.id) ?? null;
+            return (
+              <div key={produto.id} className="col-lg-2 col-md-3 col-sm-4 col-6">
+                <Card
+                  produto={produto}
+                  produtoNoCarrinho={produtoNoCarrinho}
+                  adicionarProduto={adicionarProduto}
+                  subtrairProduto={subtrairProduto}
+                />
+              </div>
+            )
+          })
         )}
       </div>
 

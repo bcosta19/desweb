@@ -22,7 +22,7 @@ const useCarrinho = () => {
     if (!usuario) return;
     setCarregando(true);
     try {
-      const resposta = await fetch(`http://localhost:8080/carrinho/${usuario.id}`);
+      const resposta = await fetch(`http://localhost:8080/carrinhos/${usuario.id}`);
       if (!resposta.ok) throw new Error(await resposta.text());
       const dados: ProdutoComQuantidade[] = await resposta.json();
       setProdutos(dados);
@@ -36,7 +36,7 @@ const useCarrinho = () => {
   const alterarQuantidade = async (idProduto: number, quantidade: number) => {
     if (!usuario) return;
     try {
-      await fetch("http://localhost:8080/carrinho/atualizar", {
+      await fetch("http://localhost:8080/carrinhos/atualizar", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idUsuario: usuario.id, idProduto, quantidade })
@@ -54,7 +54,7 @@ const useCarrinho = () => {
   const removerProduto = async (idProduto: number) => {
     if (!usuario) return;
     try {
-      await fetch("http://localhost:8080/carrinho/remover", {
+      await fetch("http://localhost:8080/carrinhos/remover", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idUsuario: usuario.id, idProduto })
@@ -68,7 +68,7 @@ const useCarrinho = () => {
   const limparCarrinho = async () => {
     if (!usuario) return;
     try {
-      await fetch(`http://localhost:8080/carrinho/${usuario.id}`, {
+      await fetch(`http://localhost:8080/carrinhos/${usuario.id}`, {
         method: "DELETE",
       });
       setProdutos([]);

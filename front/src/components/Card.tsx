@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import Produto from "../interface/Produto";
+import type { ProdutoComQuantidade } from '../hooks/useCarrinho.ts'
 import { ProdCarrinho } from "../pages/CardsPorSlugCategoriaPage";
 
 interface Props {
   produto: Produto;
-  produtoNoCarrinho: ProdCarrinho | null;
+  produtoNoCarrinho: ProdutoComQuantidade | null;
   adicionarProduto: (produto: Produto) => void;
   subtrairProduto: (produto: Produto) => void;
 }
