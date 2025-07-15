@@ -19,7 +19,11 @@ const useCarrinho = () => {
   const usuario = usuarioJSON ? JSON.parse(usuarioJSON) : null;
 
   const carregarCarrinho = async () => {
-    if (!usuario) return;
+    if (!usuario) {
+      setCarregando(false);
+      return;
+
+    }
     setCarregando(true);
     try {
       const resposta = await fetch(`http://localhost:8080/carrinhos/${usuario.id}`);

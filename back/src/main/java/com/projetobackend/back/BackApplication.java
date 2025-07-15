@@ -34,7 +34,7 @@ public class BackApplication implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    Usuario usuario = new Usuario("admin", "admin");
+    Usuario usuario = new Usuario("admin", "admin123");
     usuarioRepository.save(usuario);
 
     Categoria varas = new Categoria("Varas", "varas");

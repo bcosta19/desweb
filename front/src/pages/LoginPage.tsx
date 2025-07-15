@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const loginSchema = z.object({
   conta: z.string().min(3, "A conta deve ter no mínimo 3 caracteres"),
-  senha: z.string().min(5, "A senha deve ter no mínimo 6 caracteres"),
+  senha: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
 });
 
 type LoginInput = z.infer<typeof loginSchema>;
@@ -23,32 +23,30 @@ export default function PaginaLoginUsuario() {
   });
 
   const onSubmit = async (data: LoginInput) => {
-
     try {
-      const resp = await fetch(
-        "http://localhost:8080/autenticacao/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ conta: data.conta, senha: data.senha }),
-        }
-      );
+      const resp = await fetch("http://localhost:8080/autenticacao/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
       if (!resp.ok) {
         const errorText = await resp.text();
         throw new Error(errorText || "Erro ao autenticar");
-        return;
       }
 
+      // Supondo que o backend retorne JSON do usuário autenticado
       const usuario = await resp.json();
-      localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
+
+      // Salva no localStorage e redireciona
+      localStorage.setItem("usuario", JSON.stringify(usuario));
       navigate("/");
       window.location.reload();
-
     } catch (e: any) {
-      setError("conta", { message: e.message });
+      console.error("Erro no login:", e);
+      setError("conta", { message: e.message || "Erro desconhecido" });
     }
-  }
-
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light p-3">
@@ -57,7 +55,6 @@ export default function PaginaLoginUsuario() {
           <h2 className="card-title text-center mb-4">Login</h2>
 
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            {/* Conta (nome de usuário) */}
             <div className="mb-3">
               <label className="form-label">Usuário</label>
               <input
@@ -68,11 +65,10 @@ export default function PaginaLoginUsuario() {
                 disabled={isSubmitting}
               />
               {errors.conta && (
-                <div className="invalid-feedback">
-                  {errors.conta.message}
-                </div>
+                <div className="invalid-feedback">{errors.conta.message}</div>
               )}
-            </div>            {/* Senha */}
+            </div>
+
             <div className="mb-4">
               <label className="form-label">Senha</label>
               <input
@@ -98,7 +94,7 @@ export default function PaginaLoginUsuario() {
 
           <div className="text-center">
             <p className="mb-0">
-              Não tem uma conta?{' '}
+              Não tem uma conta?{" "}
               <button
                 className="btn btn-link p-0"
                 onClick={() => navigate("/cadastro")}
@@ -112,4 +108,3 @@ export default function PaginaLoginUsuario() {
     </div>
   );
 }
-

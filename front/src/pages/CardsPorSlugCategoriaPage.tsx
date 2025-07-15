@@ -54,9 +54,13 @@ const CardsPorSlugCategoriaPage = () => {
       alterarQuantidade(produto.id, novaQuantidade);
     }
   };
+
+
+
+  console.log("data:", data);
+  console.log("data.pages", data?.pages);
+  console.log("carregandoProdutos:", carregandoProdutos);
   console.log("carregandoCarrinho:", carregandoCarrinho);
-  console.log("produtos do carrinho:", produtosCarrinho);
-  console.log("data produtos:", data);
   if (carregandoProdutos || carregandoCarrinho) return <CardsPlaceholderPage />; // Adicionar placeholder
   if (errorProdutos) return <p>Erro ao carregar produtos</p>;
   if (erroCarrinho) return <p>Erro ao carregar carrinho</p>;
