@@ -21,7 +21,7 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
   @Query("select p from Produto p left outer join fetch p.categoria order by p.id")
   List<Produto> recuperarTodosProdutosComCategoria();
 
-  @Query("select p from Produto p left outer join fetch p.categoria p.id = :id")
+  @Query("select p from Produto p left outer join fetch p.categoria where p.id = :id")
   Optional<Produto> recuperarProdutoPorId(@Param("id") Long id);
 
   @Query("select p from Produto p " +
@@ -49,7 +49,7 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
   Page<Produto> recuperarProdutosComPaginacao(Pageable pageable, @Param("nome") String nome);
 
   @Query(value = "select p from Produto p " +
-      "left outer join fetch pcategoria c " +
+      "left outer join fetch p.categoria c " +
       "order by p.id", countQuery = "select count(p) from Produto p")
   Page<Produto> recuperarProdutosPaginados(Pageable pageable);
 

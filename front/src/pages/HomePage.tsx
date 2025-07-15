@@ -10,16 +10,16 @@ const HomePage = () => {
           <NavLink className="nav-link" aria-current="page" to="/">
             Todos
           </NavLink>
-          <NavLink className="nav-link" to="/varas/">
+          <NavLink className="nav-link" to="/categoria/varas/">
             Varas
           </NavLink>
-          <NavLink className="nav-link" to="/carretilhas/">
+          <NavLink className="nav-link" to="/categoria/carretilhas/">
             Carretilhas
           </NavLink>
-          <NavLink className="nav-link" to="/linhas/">
+          <NavLink className="nav-link" to="/categoria/linhas/">
             Linhas
           </NavLink>
-          <NavLink className="nav-link" to="/chumbadas/">
+          <NavLink className="nav-link" to="/categoria/chumbadas/">
             Chumbadas
           </NavLink>
         </nav>

@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 
 const loginSchema = z.object({
-  email: z.string().email("Email inválido"),
-  senha: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
+  conta: z.string().min(3, "A conta deve ter no mínimo 3 caracteres"),
+  senha: z.string().min(5, "A senha deve ter no mínimo 6 caracteres"),
 });
 
 type LoginInput = z.infer<typeof loginSchema>;
@@ -17,19 +17,38 @@ export default function PaginaLoginUsuario() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    setError,
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async (data: LoginInput) => {
-    // Simula verificação de login
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        console.log("Login com sucesso:", data);
-        resolve();
-      }, 1000);
-    });
-  };
+
+    try {
+      const resp = await fetch(
+        "http://localhost:8080/autenticacao/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ conta: data.conta, senha: data.senha }),
+        }
+      );
+      if (!resp.ok) {
+        const errorText = await resp.text();
+        throw new Error(errorText || "Erro ao autenticar");
+        return;
+      }
+
+      const usuario = await resp.json();
+      localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
+      navigate("/");
+      window.location.reload();
+
+    } catch (e: any) {
+      setError("conta", { message: e.message });
+    }
+  }
+
 
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light p-3">
@@ -38,22 +57,22 @@ export default function PaginaLoginUsuario() {
           <h2 className="card-title text-center mb-4">Login</h2>
 
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            {/* Email */}
+            {/* Conta (nome de usuário) */}
             <div className="mb-3">
-              <label className="form-label">Email</label>
+              <label className="form-label">Usuário</label>
               <input
-                type="email"
-                className={`form-control ${errors.email ? "is-invalid" : ""}`}
-                placeholder="seu@email.com"
-                {...register("email")}
+                type="text"
+                className={`form-control ${errors.conta ? "is-invalid" : ""}`}
+                placeholder="admin, joao123, etc."
+                {...register("conta")}
                 disabled={isSubmitting}
               />
-              {errors.email && (
-                <div className="invalid-feedback">{errors.email.message}</div>
+              {errors.conta && (
+                <div className="invalid-feedback">
+                  {errors.conta.message}
+                </div>
               )}
-            </div>
-
-            {/* Senha */}
+            </div>            {/* Senha */}
             <div className="mb-4">
               <label className="form-label">Senha</label>
               <input

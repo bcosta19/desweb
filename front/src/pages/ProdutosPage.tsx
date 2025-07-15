@@ -1,6 +1,7 @@
 import TabelaProdutos from "../components/TabelaDeProduto";
 import { Produto } from "../interface/Produto";
-import recuperarProdutos from "../util/recuperarProdutos";
+// import recuperarProdutos from "../util/recuperarProdutos";
+import useRecuperarProdutos from "../hooks/useRecuperarProdutos";
 import { use, useEffect, useState } from "react";
 
 const ProdutosPage = () => {
@@ -8,7 +9,7 @@ const ProdutosPage = () => {
 
   useEffect(() => {
     const getProdutos = async () => {
-      const response = await recuperarProdutos();
+      const response = useRecuperarProdutos();
       setProdutos(response);
     }
     getProdutos();

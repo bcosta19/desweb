@@ -8,6 +8,7 @@ import ContatosPage from "../pages/ContatosPage";
 import CardsPorSlugCategoriaPage from "../pages/CardsPorSlugCategoriaPage";
 import CarrinhoPage from "../pages/CarrinhoPage";
 import CadastroUsuario from "../pages/CadastroUsuario";
+import FavoritosPage from "../pages/FavoritosPage";
 
 
 const router = createBrowserRouter(
@@ -18,14 +19,14 @@ const router = createBrowserRouter(
       errorElement: <div>Erro ao carregar a página</div>,
       children: [
         {
-          path: "",
-          element: <HomePage />,
+          path: "", element: <HomePage />,
           children: [
             {
-              path: ":slugCategoria?",
-              element: <CardsPorSlugCategoriaPage />,
+              path: "",
+              element: <CardsPorSlugCategoriaPage />
             },
-          ],
+            { path: "categoria/:slugCategoria", element: <CardsPorSlugCategoriaPage /> },
+          ]
         },
         { path: "produtos", element: <ProdutosPage /> },
         { path: "produto/:id", element: <ProdutoPage /> },
@@ -33,6 +34,7 @@ const router = createBrowserRouter(
         { path: "contatos", element: <ContatosPage /> },
         { path: "carrinho", element: <CarrinhoPage /> },
         { path: "cadastro", element: <CadastroUsuario /> },
+        { path: "favoritos", element: <FavoritosPage /> }
       ],
     },
   ]

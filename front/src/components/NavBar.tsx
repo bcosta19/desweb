@@ -1,6 +1,23 @@
-import { NavLink } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
 import Logo from "../assets/logo.png"
 const NavBar = () => {
+  const [usuario, setUsuario] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const nomeUsuario = localStorage.getItem("usuario");
+    setUsuario(nomeUsuario);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
+    setUsuario(null);
+    navigate("/");
+  };
+
+
   return (
     <nav className="navbar navbar-expand-lg  navbar-dark" style={{ backgroundColor: "#1B4F72" }}>
       <div className="container">
@@ -46,11 +63,26 @@ const NavBar = () => {
           </ul>
 
           <ul className="navbar-nav">
-            <li className="nav-item">
-              <NavLink className="nav-link" aria-current="page" to="/login">
-                Login
-              </NavLink>
-            </li>
+            {usuario ? (
+              <>
+                <li className="nav-item">
+                  <span className="nav-link disabled">
+                    <strong>{usuario}</strong>
+                  </span>
+                </li>
+                <li className="nav-item">
+                  <button className="btn btn-outline-light btn-sm ms-2" onClick={handleLogout}>
+                    Sair
+                  </button>
+                </li>
+              </>
+            ) :
+
+              (<li className="nav-item">
+                <NavLink className="nav-link" aria-current="page" to="/login">
+                  Login
+                </NavLink>
+              </li>)}
           </ul>
 
         </div>

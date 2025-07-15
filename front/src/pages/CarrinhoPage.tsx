@@ -1,87 +1,38 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ProdCarrinho } from "./CardsPorSlugCategoriaPage";
-import type { Produto } from "../interface/Produto";
-import recuperarProdutos from "../util/recuperarProdutos";
-interface ProdutoComQuantidade extends Produto {
-  quantidade: number;
-}
+import useCarrinho from "../hooks/useCarrinho";
 
 const CarrinhoPage = () => {
   const navigate = useNavigate();
-  const [carrinho, setCarrinho] = useState<ProdCarrinho[]>([]);
-  const [produtosDetalhados, setProdutosDetalhados] = useState<ProdutoComQuantidade[]>([]);
-
-  useEffect(() => {
-    const itens = localStorage.getItem("carrinho");
-    if (itens) {
-      setCarrinho(JSON.parse(itens));
-    }
-  }, []);
-
-  useEffect(() => {
-    const carregarProdutosDoCarrinho = async () => {
-      const todosProdutos = await recuperarProdutos();
-      const detalhados = carrinho.map((item) => {
-        const produto = todosProdutos.find((p) => p.id === item.idProduto);
-        return produto ? { ...produto, quantidade: item.quantidade } : null;
-      }).filter(Boolean) as ProdutoComQuantidade[];
-
-      setProdutosDetalhados(detalhados);
-    };
-
-    if (carrinho.length > 0) {
-      carregarProdutosDoCarrinho();
-    } else {
-      setProdutosDetalhados([]);
-    }
-  }, [carrinho]);
-
-  const atualizarCarrinho = (novoCarrinho: ProdCarrinho[]) => {
-    setCarrinho(novoCarrinho);
-    localStorage.setItem("carrinho", JSON.stringify(novoCarrinho));
-  };
-
-  const alterarQuantidade = (idProduto: number, novaQuantidade: number) => {
-    if (novaQuantidade < 1) return;
-
-    const produto = produtosDetalhados.find(p => p.id === idProduto);
-    if (!produto || novaQuantidade > produto.qtdEstoque) return;
-
-    const novoCarrinho = carrinho.map((item) =>
-      item.idProduto === idProduto
-        ? { ...item, quantidade: novaQuantidade }
-        : item
-    );
-
-    atualizarCarrinho(novoCarrinho);
-  };
-
-  const removerProduto = (idProduto: number) => {
-    const novoCarrinho = carrinho.filter((item) => item.idProduto !== idProduto);
-    atualizarCarrinho(novoCarrinho);
-  };
-
-  const limparCarrinho = () => {
-    atualizarCarrinho([]);
-  };
+  const {
+    produtos,
+    carregando,
+    erro,
+    alterarQuantidade,
+    removerProduto,
+    limparCarrinho,
+  } = useCarrinho();
 
   const finalizarCompra = () => {
-    // Aqui você pode fazer validações, salvar pedido, etc.
     alert("Compra finalizada com sucesso!");
     limparCarrinho();
-    navigate("/checkout"); // redireciona para uma página de confirmação (ajuste se necessário)
+    navigate("/checkout");
   };
 
   const calcularTotal = () => {
-    return produtosDetalhados.reduce((total, produto) => total + produto.preco * produto.quantidade, 0);
+    return produtos.reduce(
+      (total, produto) => total + produto.preco * produto.quantidade,
+      0
+    );
   };
+
+  if (carregando) return <p>Carregando produtos do carrinho...</p>;
+  if (erro) return <p>Erro ao carregar carrinho: {erro}</p>;
 
   return (
     <div className="container mt-4">
       <h2>Carrinho de Compras</h2>
 
-      {produtosDetalhados.length === 0 ? (
+      {produtos.length === 0 ? (
         <p>Seu carrinho está vazio.</p>
       ) : (
         <>
@@ -97,7 +48,7 @@ const CarrinhoPage = () => {
               </tr>
             </thead>
             <tbody>
-              {produtosDetalhados.map((produto) => (
+              {produtos.map((produto) => (
                 <tr key={produto.id}>
                   <td>
                     <img src={produto.imagem} alt={produto.nome} width={60} />
@@ -112,26 +63,11 @@ const CarrinhoPage = () => {
                         max={produto.qtdEstoque}
                         value={produto.quantidade}
                         onChange={(e) => {
-                          const valor = e.target.value;
-                          if (valor === "") return;
-
-                          const numero = parseInt(valor);
-                          if (!isNaN(numero)) {
-                            alterarQuantidade(produto.id, parseInt(e.target.value));
+                          const valor = parseInt(e.target.value);
+                          if (!isNaN(valor) && valor >= 1 && valor <= produto.qtdEstoque) {
+                            alterarQuantidade(produto.id, valor);
                           }
                         }}
-                        onBlur={(e) => {
-                          const valor = e.target.value;
-                          const destino = e.relatedTarget as HTMLElement | null;
-
-                          const clicouRemover = destino?.dataset?.action === "remove" && destino?.dataset?.id === String(produto.id);
-
-                          if (valor === "" && clicouRemover) {
-                            e.target.focus();
-                          }
-
-                        }}
-
                         className="form-control form-control-sm text-center"
                         style={{ width: 60 }}
                       />
@@ -141,8 +77,6 @@ const CarrinhoPage = () => {
                   <td>
                     <button
                       className="btn btn-sm btn-danger"
-                      data-action="remove"
-                      data-id={produto.id}
                       onClick={() => removerProduto(produto.id)}
                     >
                       Remover
@@ -164,6 +98,7 @@ const CarrinhoPage = () => {
           </div>
         </>
       )}
+
       <div className="container mt-4">
         <button
           className="btn btn-primary position-fixed"

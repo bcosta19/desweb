@@ -1,5 +1,8 @@
 package com.projetobackend.back.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -20,6 +23,10 @@ public class Usuario {
 
   private String conta;
   private String senha;
+
+  @ManyToMany
+  @JoinTable(name = "usuario_favoritos", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "produto_id"))
+  private List<Produto> favoritos = new ArrayList<>();
 
   public Usuario(String conta, String senha) {
     this.conta = conta;

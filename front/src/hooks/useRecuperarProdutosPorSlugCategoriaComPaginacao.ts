@@ -1,84 +1,81 @@
-import { keepPreviousData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
-
+import {
+  keepPreviousData,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
 import { Produto } from "../interface/Produto";
 import ResultadoPaginado from "../interface/ResultadoPaginado";
-
-import recuperarProdutos from "../util/recuperarProdutos";
-
-import isErrorResponse from '../util/isErrorResponse';
+import isErrorResponse from "../util/isErrorResponse";
 
 interface QueryString {
-  tamanho: string,
-  slugCategoria?: string
+  tamanho: string;
+  slugCategoria?: string;
 }
 
-interface QueryStringComPagina {
-  pagina: string,
-  tamanho: string,
-  slugCategoria?: string
+interface QueryStringComPagina extends QueryString {
+  pagina: string;
 }
 
-const useRecuperarProdutosPorSlugCategoriaComPaginacao = (queryString: QueryString) => {
+const API_BASE = "http://localhost:8080";
 
-  const recuperarProdutosPorSlugCategoriaComPaginacao = async (queryStringComPagina: QueryStringComPagina): Promise<ResultadoPaginado<Produto>> => {
-    // const response = await fetch("http://localhost:8080/produtos/categoria/paginacao?" + new URLSearchParams(...queryStringComPagina as any));
-    //
-    // if (!response.ok) {
-    //   const errorResponse = await response.json();
-    //   if (isErrorResponse(errorResponse)) {
-    //     throw new Error(errorResponse.message);
-    //   }
-    //   throw new Error("Erro ao recuperar produtos por slug de categoria com paginação. Status code = " + response.status);
-    // }
-    // return await response.json();
+const useRecuperarProdutosPorSlugCategoriaComPaginacao = (
+  queryString: QueryString
+) => {
+  /**
+   * Chama o endpoint:
+   *   GET /produtos/categoria/paginacao?pagina={n}&tamanho={n}&slugCategoria={slug}
+   */
+  const recuperarProdutosPorSlugCategoriaComPaginacao = async (
+    queryStringComPagina: QueryStringComPagina
+  ): Promise<ResultadoPaginado<Produto>> => {
+    const url = new URL(
+      `${API_BASE}/produtos/categoria/paginacao`
+    );
+    url.search = new URLSearchParams({
+      pagina: queryStringComPagina.pagina,
+      tamanho: queryStringComPagina.tamanho,
+      slugCategoria: queryStringComPagina.slugCategoria ?? "",
+    }).toString();
 
-    const produtos = await recuperarProdutos();
-    let produtosFiltrados = produtos;
-    if (queryStringComPagina.slugCategoria) {
-      produtosFiltrados = produtos.filter(produto => produto.categoria?.slug === queryStringComPagina.slugCategoria);
+    const response = await fetch(url.toString());
+
+    if (!response.ok) {
+      // Tenta extrair mensagem amigável do backend
+      const maybeError = await response.json().catch(() => null);
+      if (maybeError && isErrorResponse(maybeError)) {
+        throw new Error(maybeError.message);
+      }
+      throw new Error(
+        `Erro ${response.status} ao recuperar produtos com paginação`
+      );
     }
 
+    return (await response.json()) as ResultadoPaginado<Produto>;
+  };
 
-    // Paginação 
-    const pagina = parseInt(queryStringComPagina.pagina, 10);
-    const tamanho = parseInt(queryStringComPagina.tamanho, 10);
-    const totalDePaginas = Math.ceil(produtosFiltrados.length / tamanho);
-
-    const inicio = pagina * tamanho;
-    const fim = inicio + tamanho;
-    const itensPaginados = produtosFiltrados.slice(inicio, fim);
-
-    const resultado: ResultadoPaginado<Produto> = {
-      totalDeItens: produtosFiltrados.length,
-      paginaCorrente: pagina,
-      totalDePaginas: totalDePaginas,
-      itens: itensPaginados
-    }
-
-    console.log("slugCategoria recebida =", queryStringComPagina.slugCategoria);
-    console.log("Todos os slugs disponíveis =", produtos.map(p => p.categoria.slug));
-    return resultado;
-
-  }
   return useInfiniteQuery({
-    queryKey: ["produtos", "categoria", "paginacao", queryString.tamanho, queryString.slugCategoria ?? ""],
-    queryFn: async ({ pageParam }) => recuperarProdutosPorSlugCategoriaComPaginacao({
-      pagina: pageParam.toString(),
-      ...queryString
-    }),
+    queryKey: [
+      "produtos",
+      "categoria",
+      "paginacao",
+      queryString.tamanho,
+      queryString.slugCategoria ?? "",
+    ],
+    queryFn: ({ pageParam }) =>
+      recuperarProdutosPorSlugCategoriaComPaginacao({
+        pagina: pageParam.toString(),
+        ...queryString,
+      }),
+    // React‑Query options
     refetchOnWindowFocus: false,
-    staleTime: 1000 * 30 * 1,
+    staleTime: 1000 * 30, // 30 s
     placeholderData: keepPreviousData,
     initialPageParam: 0,
-    getNextPageParam: (ultimaPagina) => {
-      return ultimaPagina.paginaCorrente < ultimaPagina.totalDePaginas - 1 ? ultimaPagina.paginaCorrente + 1 : undefined;
-    }
-
+    getNextPageParam: (ultimaPagina) =>
+      ultimaPagina.paginaCorrente < ultimaPagina.totalDePaginas - 1
+        ? ultimaPagina.paginaCorrente + 1
+        : undefined,
   });
-
-
-}
-
+};
 
 export default useRecuperarProdutosPorSlugCategoriaComPaginacao;
 

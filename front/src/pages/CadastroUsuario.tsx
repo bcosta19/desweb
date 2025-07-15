@@ -32,7 +32,9 @@ const cadastroSchema = z
 type CadastroInputData = z.infer<typeof cadastroSchema>;
 
 const cadastroUsuario = () => {
-  const [resultado, setResultado] = useState<null | CadastroInputData>(null);
+
+  const [mensagemSucesso, setMensagemSucesso] = useState<string | null>(null);
+  const [mensagemErro, setMensagemErro] = useState<string | null>(null);
 
   const {
     register,
@@ -43,15 +45,47 @@ const cadastroUsuario = () => {
     resolver: zodResolver(cadastroSchema),
   })
 
-  const onSubmit = (data: CadastroInputData) => {
+  const onSubmit = async (data: CadastroInputData) => {
     // Aqui simula o envio ao backend, implementar posteriormente
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        setResultado(data);
-        reset();
-        resolve();
-      }, 1000);
-    });
+
+    setMensagemErro(null);
+    setMensagemSucesso(null);
+
+    try {
+      const resp = await fetch("http://localhost:8080/usuarios/cadastro",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            conta: data.nome,
+            senha: data.senha
+          }),
+        });
+
+      if (!resp.ok) {
+        const errorMsg = await resp.text();
+        console.log("Erro do backend:", errorMsg); // deve aparecer no console
+        setMensagemErro(errorMsg);
+        return;
+      }
+
+      const usuarioCadastrado = await resp.json();
+      setMensagemSucesso(`Usuário ${usuarioCadastrado.conta} cadastrado com sucesso!`);
+      reset();
+
+    } catch (error) {
+      alert("Erro de conexão")
+    }
+
+
+
+    // return new Promise<void>((resolve) => {
+    //   setTimeout(() => {
+    //     setResultado(data);
+    //     reset();
+    //     resolve();
+    //   }, 1000);
+    // });
   };
 
   return (
@@ -131,12 +165,18 @@ const cadastroUsuario = () => {
               {isSubmitting ? "Cadastrando..." : "Cadastrar"}
             </button>
           </form>
-
-          {resultado && (
-            <div className="alert alert-success mt-4" role="alert">
-              Usuário {resultado.nome} cadastrado com sucesso!
+          {mensagemErro && (
+            <div className="alert alert-danger mt-4" role="alert">
+              {mensagemErro}
             </div>
           )}
+
+          {mensagemSucesso && (
+            <div className="alert alert-success mt-4" role="alert">
+              {mensagemSucesso}
+            </div>
+          )}
+
         </div>
       </div>
     </div>
