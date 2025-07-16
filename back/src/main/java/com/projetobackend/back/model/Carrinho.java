@@ -1,6 +1,7 @@
 package com.projetobackend.back.model;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -28,7 +29,7 @@ public class Carrinho {
   private Usuario usuario;
 
   @OneToMany(mappedBy = "carrinho", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-  private List<ItemCarrinho> itens;
+  private List<ItemCarrinho> itens = new ArrayList();
 
   private boolean finalizado;
   private BigDecimal total;

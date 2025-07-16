@@ -32,6 +32,7 @@ public class CarrinhoController {
       @PathVariable Long idUsuario,
       @RequestParam Long idProduto,
       @RequestParam int qtd) {
+    System.out.println(idUsuario + idProduto + qtd);
     return carrinhoService.adicionarItem(idUsuario, idProduto, qtd);
   }
 
@@ -40,6 +41,7 @@ public class CarrinhoController {
       @PathVariable Long idUsuario,
       @RequestParam Long idProduto,
       @RequestParam int novaQtd) {
+      System.out.println(">> Alterando quantidade: usuario=" + idUsuario + ", produto=" + idProduto + ", novaQtd=" + novaQtd);
     return carrinhoService.alterarQuantidade(idUsuario, idProduto, novaQtd);
   }
 

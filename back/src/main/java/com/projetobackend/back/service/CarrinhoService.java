@@ -1,6 +1,7 @@
 package com.projetobackend.back.service;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,7 @@ public class CarrinhoService {
       item.setProduto(produto);
       item.setPrecoUnitario(produto.getPreco());
       item.setQuantidade(qtd);
+      System.out.println("Adicionando novo item ao carrinho: " + item.getProduto().getNome());
       carrinho.getItens().add(item);
     } else {
       item.setQuantidade(item.getQuantidade() + qtd);
@@ -68,17 +70,66 @@ public class CarrinhoService {
   public Carrinho alterarQuantidade(Long idUsuario, Long idProduto, int novaQtd) {
     Carrinho carrinho = buscarCarrinhoAtivo(idUsuario);
 
-    ItemCarrinho item = carrinho.getItens().stream()
+    Optional<ItemCarrinho> optionalItem = carrinho.getItens().stream()
         .filter(i -> i.getProduto().getId().equals(idProduto))
-        .findFirst()
-        .orElseThrow(() -> new RuntimeException("Item não encontrado"));
-    if (novaQtd < 1)
-      carrinho.getItens().remove(item);
-    else
-      item.setQuantidade(novaQtd);
+        .findFirst();
 
-    return atualizarTotal(carrinho);
+    if (optionalItem.isPresent()) {
+      ItemCarrinho item = optionalItem.get();
+      if (novaQtd < 1) {
+        carrinho.getItens().remove(item);
+      } else {
+        item.setQuantidade(novaQtd);
+      }
+    } else {
+      if (novaQtd > 0) {
+        Produto produto = produtoRepository.findById(idProduto)
+            .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
+        ItemCarrinho novoItem = new ItemCarrinho();
+        novoItem.setProduto(produto);
+        novoItem.setQuantidade(novaQtd);
+        novoItem.setPrecoUnitario(produto.getPreco()); // ESSENCIAL
+        novoItem.setCarrinho(carrinho);
+
+        carrinho.getItens().add(novoItem);
+      }
+    }
+
+    return atualizarTotal(carrinho); // já salva o carrinho
   }
+
+  // public Carrinho alterarQuantidade(Long idUsuario, Long idProduto, int
+  // novaQtd) {
+  // Carrinho carrinho = buscarCarrinhoAtivo(idUsuario);
+  // System.out.println("Carrinho encontrado: " + carrinho.getId());
+  //
+  // Optional<ItemCarrinho> optionalItem = carrinho.getItens().stream()
+  // .filter(i -> i.getProduto().getId().equals(idProduto))
+  // .findFirst();
+  //
+  // if (optionalItem.isPresent()) {
+  // ItemCarrinho item = optionalItem.get();
+  // if (novaQtd < 1)
+  // carrinho.getItens().remove(item);
+  // else
+  // item.setQuantidade(novaQtd);
+  // } else {
+  // if (novaQtd > 0) {
+  // Produto produto = produtoRepository.findById(idProduto)
+  // .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+  //
+  // ItemCarrinho novoItem = new ItemCarrinho();
+  // novoItem.setProduto(produto);
+  // novoItem.setQuantidade(novaQtd);
+  // novoItem.setCarrinho(carrinho);
+  //
+  // carrinho.getItens().add(novoItem);
+  // }
+  // }
+  //
+  // return atualizarTotal(carrinho);
+  // }
 
   public Carrinho removerItem(Long idUsuario, Long idProduto) {
     return alterarQuantidade(idUsuario, idProduto, 0);
@@ -89,7 +140,9 @@ public class CarrinhoService {
     if (carrinho.getItens().isEmpty())
       throw new RuntimeException("Carrinho vazio");
 
-    carrinho.setFinalizado(true);
+    carrinho.getItens().clear();
+    carrinho.setTotal(BigDecimal.ZERO);
+    // carrinho.setFinalizado(true);
     return carrinhoRepository.save(carrinho);
   }
 

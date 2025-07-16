@@ -1,7 +1,11 @@
 package com.projetobackend.back.service;
 
 import com.projetobackend.back.model.Produto;
+import com.projetobackend.back.model.Usuario;
+import com.projetobackend.back.repository.CarrinhoRepository;
 import com.projetobackend.back.repository.ProdutoRepository;
+import com.projetobackend.back.repository.UsuarioRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +19,15 @@ public class ProdutoService {
 
   @Autowired
   private ProdutoRepository produtoRepository;
+
+  @Autowired
+  private CarrinhoService carrinhoService;
+
+  @Autowired
+  private UsuarioRepository usuarioRepository;
+
+  @Autowired
+  private CarrinhoRepository carrinhoRepository;
 
   public List<Produto> recuperarProdutos() {
     return produtoRepository.recuperarTodosProdutosComCategoria();
@@ -34,6 +47,13 @@ public class ProdutoService {
 
   @Transactional(rollbackFor = Exception.class)
   public void removerProduto(long id) {
+    List<Usuario> usuariosComFavorito = usuarioRepository.findAllByFavoritosId(id);
+    for (Usuario usuario : usuariosComFavorito) {
+      usuario.getFavoritos().removeIf(produto -> produto.getId().equals(id));
+      usuarioRepository.save(usuario);
+    }
+    carrinhoService.removerItem(id, id);
+
     produtoRepository.deleteById(id);
   }
 
@@ -43,7 +63,8 @@ public class ProdutoService {
   }
 
   public Page<Produto> recuperarProdutoComPaginacao(Pageable pageable, String nome) {
-    return produtoRepository.recuperarProdutosComPaginacao(pageable, nome);
+    String nomeFormatado = nome == null || nome.trim().isEmpty() ? "%" : "%" + nome + "%";
+    return produtoRepository.recuperarProdutosComPaginacao(pageable, nomeFormatado);
   }
 
   public List<Produto> recuperarProdutosPorSlugCategoria(String slugCategoria) {

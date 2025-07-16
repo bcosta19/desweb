@@ -3,6 +3,8 @@ package com.projetobackend.back.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -27,6 +29,10 @@ public class Usuario {
   @ManyToMany
   @JoinTable(name = "usuario_favoritos", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "produto_id"))
   private List<Produto> favoritos = new ArrayList<>();
+
+  @OneToOne
+  @JsonIgnore
+  private Carrinho carrinho;
 
   public Usuario(String conta, String senha) {
     this.conta = conta;

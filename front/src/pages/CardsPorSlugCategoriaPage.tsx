@@ -65,6 +65,9 @@ const CardsPorSlugCategoriaPage = () => {
   if (errorProdutos) return <p>Erro ao carregar produtos</p>;
   if (erroCarrinho) return <p>Erro ao carregar carrinho</p>;
 
+  console.log("produtosCarrinho:", produtosCarrinho);
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuario") || "null");
+  console.log(usuarioLogado);
 
   return (
     <InfiniteScroll

@@ -11,7 +11,7 @@ interface Props {
 }
 
 const Card = ({ produto, adicionarProduto, subtrairProduto, produtoNoCarrinho }: Props) => {
-  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado") || "null");
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuario") || "null");
   const [favoritado, setFavoritado] = useState<boolean>(false);
 
   useEffect(() => {
@@ -47,6 +47,7 @@ const Card = ({ produto, adicionarProduto, subtrairProduto, produtoNoCarrinho }:
     }
   };
 
+
   return (
     <div className="card h-100 border-0">
       <div className="position-relative">
@@ -58,7 +59,7 @@ const Card = ({ produto, adicionarProduto, subtrairProduto, produtoNoCarrinho }:
             style={{ width: "32px", height: "32px" }}
           >
             <img
-              src={`icons/${favoritado ? "heart-fill.svg" : "heart.svg"}`}
+              src={`/icons/${favoritado ? "heart-fill.svg" : "heart.svg"}`}
               alt="Favorito"
               width="20"
               height="20"

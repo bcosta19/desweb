@@ -6,8 +6,17 @@ const NavBar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const nomeUsuario = localStorage.getItem("usuario");
-    setUsuario(nomeUsuario);
+    const usuarioJson = localStorage.getItem("usuario");
+    if (usuarioJson) {
+      try {
+        const usuario = JSON.parse(usuarioJson);
+        setUsuario(usuario.conta);
+      } catch (e) {
+        console.error("Erro ao fazer login do usuário", e);
+        setUsuario(null);
+      }
+
+    }
   }, []);
 
   const handleLogout = () => {
@@ -15,6 +24,7 @@ const NavBar = () => {
     localStorage.removeItem("usuario");
     setUsuario(null);
     navigate("/");
+    window.location.reload(); // Recarrega a página para refletir a mudança
   };
 
 
@@ -56,8 +66,8 @@ const NavBar = () => {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" aria-current="page" to="/contatos">
-                Contatos
+              <NavLink className="nav-link" aria-current="page" to="/favoritos">
+                Favoritos
               </NavLink>
             </li>
           </ul>

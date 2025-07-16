@@ -47,7 +47,7 @@ public class Produto {
   @Column(name = "DATA_CADASTRO")
   private LocalDate dataCadastro;
 
-  @NotNull(message = "A Catgoria deve ser informada")
+  @NotNull(message = "A Categoria deve ser informada")
   @ManyToOne
   private Categoria categoria;
 

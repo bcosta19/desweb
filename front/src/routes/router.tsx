@@ -9,6 +9,7 @@ import CardsPorSlugCategoriaPage from "../pages/CardsPorSlugCategoriaPage";
 import CarrinhoPage from "../pages/CarrinhoPage";
 import CadastroUsuario from "../pages/CadastroUsuario";
 import FavoritosPage from "../pages/FavoritosPage";
+import EditarProdutoPage from "../pages/EditarProdutoPage";
 
 
 const router = createBrowserRouter(
@@ -34,7 +35,8 @@ const router = createBrowserRouter(
         { path: "contatos", element: <ContatosPage /> },
         { path: "carrinho", element: <CarrinhoPage /> },
         { path: "cadastro", element: <CadastroUsuario /> },
-        { path: "favoritos", element: <FavoritosPage /> }
+        { path: "favoritos", element: <FavoritosPage /> },
+        { path: "produtos/editar/:idProduto", element: <EditarProdutoPage /> },
       ],
     },
   ]

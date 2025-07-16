@@ -1,6 +1,6 @@
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useCarrinho from "../hooks/useCarrinho";
-
 const CarrinhoPage = () => {
   const navigate = useNavigate();
   const {
@@ -12,10 +12,13 @@ const CarrinhoPage = () => {
     limparCarrinho,
   } = useCarrinho();
 
+  const [valores, setValores] = useState<Record<number, string>>({});
+
+  const inputRefs = useRef<Record<number, HTMLInputElement | null>>({});
+
   const finalizarCompra = () => {
     alert("Compra finalizada com sucesso!");
-    limparCarrinho();
-    navigate("/checkout");
+    navigate("/");
   };
 
   const calcularTotal = () => {
@@ -58,14 +61,38 @@ const CarrinhoPage = () => {
                   <td style={{ maxWidth: 120 }}>
                     <div className="d-flex align-items-center gap-2">
                       <input
+                        ref={(el) => (inputRefs.current[produto.id] = el)}
                         type="number"
                         min={1}
                         max={produto.qtdEstoque}
-                        value={produto.quantidade}
+                        value={valores[produto.id] ?? produto.quantidade.toString()}
                         onChange={(e) => {
+                          setValores((prev) => ({
+                            ...prev,
+                            [produto.id]: e.target.value,
+                          }));
+                        }}
+                        onBlur={(e) => {
                           const valor = parseInt(e.target.value);
+                          if (e.target.value.trim() === "") {
+                            // Se vazio, manter o foco
+                            inputRefs.current[produto.id]?.focus();
+                            return;
+                          }
+
                           if (!isNaN(valor) && valor >= 1 && valor <= produto.qtdEstoque) {
                             alterarQuantidade(produto.id, valor);
+                          } else {
+                            // Restaura valor anterior válido
+                            setValores((prev) => ({
+                              ...prev,
+                              [produto.id]: produto.quantidade.toString(),
+                            }));
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            (e.target as HTMLInputElement).blur(); // Força validação
                           }
                         }}
                         className="form-control form-control-sm text-center"

@@ -2,6 +2,8 @@ package com.projetobackend.back.model;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +19,7 @@ public class ItemCarrinho {
   private Long id;
 
   @ManyToOne
+  @JsonIgnore
   private Carrinho carrinho;
 
   @ManyToOne
