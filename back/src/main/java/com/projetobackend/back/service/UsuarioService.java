@@ -19,6 +19,7 @@ public class UsuarioService {
   private ProdutoRepository produtoRepository;
 
   public List<Produto> recuperarFavoritos(Long idUsuario) {
+    System.out.println("Requisição do usuário com ID: " + idUsuario);
     Usuario usuario = usuarioRepository.findById(idUsuario)
         .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     return usuario.getFavoritos();

@@ -48,11 +48,28 @@ public class ProdutoService {
   @Transactional(rollbackFor = Exception.class)
   public void removerProduto(long id) {
     List<Usuario> usuariosComFavorito = usuarioRepository.findAllByFavoritosId(id);
+    //
+    // remove de favoritos
     for (Usuario usuario : usuariosComFavorito) {
       usuario.getFavoritos().removeIf(produto -> produto.getId().equals(id));
       usuarioRepository.save(usuario);
     }
-    carrinhoService.removerItem(id, id);
+
+    // remove de todos os carrinhos
+    List<Usuario> todosUsuarios = usuarioRepository.findAll();
+    for (Usuario usuario : todosUsuarios) {
+      try {
+        carrinhoService.removerItem(usuario.getId(), id);
+      } catch (Exception e) {
+        // Produto pode não estar no carrinho, então ignoramos
+        System.out.println("Produto " + id + " não estava no carrinho do usuário " + usuario.getId());
+      }
+    }
+
+    // Por fim, remover o produto do banco
+    produtoRepository.deleteById(id);
+
+    // carrinhoService.removerItem(id, id);
 
     produtoRepository.deleteById(id);
   }
