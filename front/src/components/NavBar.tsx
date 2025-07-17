@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import Logo from "../assets/logo.png"
+
 const NavBar = () => {
   const [usuario, setUsuario] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -15,7 +16,6 @@ const NavBar = () => {
         console.error("Erro ao fazer login do usuário", e);
         setUsuario(null);
       }
-
     }
   }, []);
 
@@ -24,18 +24,14 @@ const NavBar = () => {
     localStorage.removeItem("usuario");
     setUsuario(null);
     navigate("/");
-    window.location.reload(); // Recarrega a página para refletir a mudança
+    window.location.reload();
   };
 
-
   return (
-    <nav className="navbar navbar-expand-lg  navbar-dark" style={{ backgroundColor: "#1B4F72" }}>
+    <nav className="navbar navbar-expand-lg navbar-dark" style={{ backgroundColor: "#1B4F72" }}>
       <div className="container">
         <NavLink className="navbar-brand" aria-current="page" to={"/"}>
-          <img
-            src={Logo} alt="logo" style={{ width: "50px" }}
-          />
-
+          <img src={Logo} alt="logo" style={{ width: "50px" }} />
         </NavLink>
         <button
           className="navbar-toggler"
@@ -51,25 +47,32 @@ const NavBar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
-              <NavLink className="nav-link" aria-current="page" to="/" end>
+              <NavLink className="nav-link" to="/" end>
                 Home
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" aria-current="page" to="/produtos">
+              <NavLink className="nav-link" to="/produtos">
                 Produtos
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" aria-current="page" to="/carrinho">
+              <NavLink className="nav-link" to="/carrinho">
                 Carrinho
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" aria-current="page" to="/favoritos">
+              <NavLink className="nav-link" to="/favoritos">
                 Favoritos
               </NavLink>
             </li>
+            {usuario && (
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/produtos/novo">
+                  Cadastrar Produto
+                </NavLink>
+              </li>
+            )}
           </ul>
 
           <ul className="navbar-nav">
@@ -86,21 +89,19 @@ const NavBar = () => {
                   </button>
                 </li>
               </>
-            ) :
-
-              (<li className="nav-item">
-                <NavLink className="nav-link" aria-current="page" to="/login">
+            ) : (
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/login">
                   Login
                 </NavLink>
-              </li>)}
+              </li>
+            )}
           </ul>
-
         </div>
-
       </div>
     </nav>
-  )
-
-}
+  );
+};
 
 export default NavBar;
+
