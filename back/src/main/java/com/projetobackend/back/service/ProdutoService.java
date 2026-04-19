@@ -6,6 +6,8 @@ import com.projetobackend.back.repository.CarrinhoRepository;
 import com.projetobackend.back.repository.ProdutoRepository;
 import com.projetobackend.back.repository.UsuarioRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,8 @@ import java.util.List;
 
 @Service
 public class ProdutoService {
+
+  private static final Logger log = LoggerFactory.getLogger(ProdutoService.class);
 
   @Autowired
   private ProdutoRepository produtoRepository;
@@ -61,16 +65,11 @@ public class ProdutoService {
       try {
         carrinhoService.removerItem(usuario.getId(), id);
       } catch (Exception e) {
-        // Produto pode não estar no carrinho, então ignoramos
-        System.out.println("Produto " + id + " não estava no carrinho do usuário " + usuario.getId());
+        log.debug("Produto {} não estava no carrinho do usuário {}", id, usuario.getId());
       }
     }
 
     // Por fim, remover o produto do banco
-    produtoRepository.deleteById(id);
-
-    // carrinhoService.removerItem(id, id);
-
     produtoRepository.deleteById(id);
   }
 

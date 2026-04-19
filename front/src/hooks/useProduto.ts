@@ -1,30 +1,21 @@
 import { useState } from "react";
 import { Produto } from "../interface/Produto";
-
-const API_BASE = "http://localhost:8080";
+import { apiFetch } from "../util/api";
 
 const useProduto = () => {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
-  const cadastrarProduto = async (produto: Produto): Promise<Produto | null> => {
+  const cadastrarProduto = async (produto: Omit<Produto, "id">): Promise<Produto | null> => {
     try {
       setCarregando(true);
       setErro(null);
-      const resposta = await fetch(`${API_BASE}/produtos`, {
+      const resposta = await apiFetch("/produtos", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(produto),
       });
-
-      if (!resposta.ok) {
-        throw new Error(await resposta.text());
-      }
-
-      const novoProduto = await resposta.json();
-      return novoProduto;
+      if (!resposta.ok) throw new Error(await resposta.text());
+      return await resposta.json();
     } catch (err: any) {
       setErro(err.message);
       return null;
@@ -33,39 +24,29 @@ const useProduto = () => {
     }
   };
 
-  const editarProduto = async (produto: Produto) => {
+  const editarProduto = async (produto: Produto): Promise<void> => {
     try {
       setCarregando(true);
       setErro(null);
-      const resposta = await fetch(`${API_BASE}/produtos`, {
+      const resposta = await apiFetch("/produtos", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(produto),
       });
-
-      if (!resposta.ok) {
-        throw new Error(await resposta.text());
-      }
+      if (!resposta.ok) throw new Error(await resposta.text());
     } catch (err: any) {
       setErro(err.message);
+      throw err;
     } finally {
       setCarregando(false);
     }
   };
 
-  const removerProduto = async (idProduto: number) => {
+  const removerProduto = async (idProduto: number): Promise<void> => {
     try {
       setCarregando(true);
       setErro(null);
-      const resposta = await fetch(`${API_BASE}/produtos/${idProduto}`, {
-        method: "DELETE",
-      });
-
-      if (!resposta.ok) {
-        throw new Error(await resposta.text());
-      }
+      const resposta = await apiFetch(`/produtos/${idProduto}`, { method: "DELETE" });
+      if (!resposta.ok) throw new Error(await resposta.text());
     } catch (err: any) {
       setErro(err.message);
     } finally {
@@ -77,11 +58,8 @@ const useProduto = () => {
     try {
       setCarregando(true);
       setErro(null);
-      const resposta = await fetch(`${API_BASE}/produtos/${idProduto}`);
-      if (!resposta.ok) {
-        throw new Error(await resposta.text());
-      }
-
+      const resposta = await apiFetch(`/produtos/${idProduto}`);
+      if (!resposta.ok) throw new Error(await resposta.text());
       return await resposta.json();
     } catch (err: any) {
       setErro(err.message);
@@ -91,14 +69,7 @@ const useProduto = () => {
     }
   };
 
-  return {
-    cadastrarProduto,
-    editarProduto,
-    removerProduto,
-    recuperarProduto,
-    carregando,
-    erro,
-  };
+  return { cadastrarProduto, editarProduto, removerProduto, recuperarProduto, carregando, erro };
 };
 
 export default useProduto;

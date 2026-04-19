@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
+import { apiFetch } from '../util/api';
 
 // import { Card, CardContent } from "@/components/ui/card";
 // import { Button } from "@/components/ui/button";
@@ -52,14 +53,10 @@ const cadastroUsuario = () => {
     setMensagemSucesso(null);
 
     try {
-      const resp = await fetch("http://localhost:8080/usuarios/cadastro",
+      const resp = await apiFetch("/usuarios/cadastro",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            conta: data.nome,
-            senha: data.senha
-          }),
+          body: JSON.stringify({ conta: data.nome, senha: data.senha }),
         });
 
       if (!resp.ok) {

@@ -10,7 +10,7 @@ const loginSchema = z.object({
 
 type LoginInput = z.infer<typeof loginSchema>;
 
-export default function PaginaLoginUsuario() {
+export default function LoginPage() {
   const navigate = useNavigate();
 
   const {
@@ -18,9 +18,7 @@ export default function PaginaLoginUsuario() {
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
-  } = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
-  });
+  } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
 
   const onSubmit = async (data: LoginInput) => {
     try {
@@ -32,18 +30,18 @@ export default function PaginaLoginUsuario() {
 
       if (!resp.ok) {
         const errorText = await resp.text();
-        throw new Error(errorText || "Erro ao autenticar");
+        throw new Error(errorText || "Usuário ou senha inválidos");
       }
 
-      // Supondo que o backend retorne JSON do usuário autenticado
-      const usuario = await resp.json();
+      const { id, conta, role, token } = await resp.json();
 
-      // Salva no localStorage e redireciona
-      localStorage.setItem("usuario", JSON.stringify(usuario));
+      // Salva token separado — nunca salvar a senha
+      localStorage.setItem("token", token);
+      localStorage.setItem("usuario", JSON.stringify({ id, conta, role }));
+
       navigate("/");
       window.location.reload();
     } catch (e: any) {
-      console.error("Erro no login:", e);
       setError("conta", { message: e.message || "Erro desconhecido" });
     }
   };
@@ -53,14 +51,13 @@ export default function PaginaLoginUsuario() {
       <div className="card shadow w-100" style={{ maxWidth: 400 }}>
         <div className="card-body">
           <h2 className="card-title text-center mb-4">Login</h2>
-
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="mb-3">
               <label className="form-label">Usuário</label>
               <input
                 type="text"
                 className={`form-control ${errors.conta ? "is-invalid" : ""}`}
-                placeholder="admin, joao123, etc."
+                placeholder="seu usuário"
                 {...register("conta")}
                 disabled={isSubmitting}
               />
@@ -68,7 +65,6 @@ export default function PaginaLoginUsuario() {
                 <div className="invalid-feedback">{errors.conta.message}</div>
               )}
             </div>
-
             <div className="mb-4">
               <label className="form-label">Senha</label>
               <input
@@ -82,23 +78,14 @@ export default function PaginaLoginUsuario() {
                 <div className="invalid-feedback">{errors.senha.message}</div>
               )}
             </div>
-
-            <button
-              type="submit"
-              className="btn btn-primary w-100 mb-3"
-              disabled={isSubmitting}
-            >
+            <button type="submit" className="btn btn-primary w-100 mb-3" disabled={isSubmitting}>
               {isSubmitting ? "Entrando..." : "Entrar"}
             </button>
           </form>
-
           <div className="text-center">
             <p className="mb-0">
               Não tem uma conta?{" "}
-              <button
-                className="btn btn-link p-0"
-                onClick={() => navigate("/cadastro")}
-              >
+              <button className="btn btn-link p-0" onClick={() => navigate("/cadastro")}>
                 Cadastre-se aqui
               </button>
             </p>

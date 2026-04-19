@@ -1,28 +1,25 @@
-import { NavLink, useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react"
-import Logo from "../assets/logo.png"
+import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Logo from "../assets/logo.png";
+import { getUsuario, logout, isAdmin } from "../hooks/useAuth";
 
 const NavBar = () => {
-  const [usuario, setUsuario] = useState<string | null>(null);
+  const [conta, setConta] = useState<string | null>(null);
+  const [admin, setAdmin] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const usuarioJson = localStorage.getItem("usuario");
-    if (usuarioJson) {
-      try {
-        const usuario = JSON.parse(usuarioJson);
-        setUsuario(usuario.conta);
-      } catch (e) {
-        console.error("Erro ao fazer login do usuário", e);
-        setUsuario(null);
-      }
+    const usuario = getUsuario();
+    if (usuario) {
+      setConta(usuario.conta);
+      setAdmin(isAdmin());
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("usuario");
-    setUsuario(null);
+    logout();
+    setConta(null);
+    setAdmin(false);
     navigate("/");
     window.location.reload();
   };
@@ -30,71 +27,37 @@ const NavBar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark" style={{ backgroundColor: "#1B4F72" }}>
       <div className="container">
-        <NavLink className="navbar-brand" aria-current="page" to={"/"}>
+        <NavLink className="navbar-brand" to="/">
           <img src={Logo} alt="logo" style={{ width: "50px" }} />
         </NavLink>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
+        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto">
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/" end>
-                Home
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/produtos">
-                Produtos
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/carrinho">
-                Carrinho
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/favoritos">
-                Favoritos
-              </NavLink>
-            </li>
-            {usuario && (
+            <li className="nav-item"><NavLink className="nav-link" to="/" end>Home</NavLink></li>
+            <li className="nav-item"><NavLink className="nav-link" to="/produtos">Produtos</NavLink></li>
+            <li className="nav-item"><NavLink className="nav-link" to="/carrinho">Carrinho</NavLink></li>
+            <li className="nav-item"><NavLink className="nav-link" to="/favoritos">Favoritos</NavLink></li>
+            {/* Apenas admins veem o link de cadastrar produto */}
+            {admin && (
               <li className="nav-item">
-                <NavLink className="nav-link" to="/produtos/novo">
-                  Cadastrar Produto
-                </NavLink>
+                <NavLink className="nav-link" to="/produtos/novo">Cadastrar Produto</NavLink>
               </li>
             )}
           </ul>
-
           <ul className="navbar-nav">
-            {usuario ? (
+            {conta ? (
               <>
                 <li className="nav-item">
-                  <span className="nav-link disabled">
-                    <strong>{usuario}</strong>
-                  </span>
+                  <span className="nav-link disabled"><strong>{conta}</strong>{admin && " (Admin)"}</span>
                 </li>
                 <li className="nav-item">
-                  <button className="btn btn-outline-light btn-sm ms-2" onClick={handleLogout}>
-                    Sair
-                  </button>
+                  <button className="btn btn-outline-light btn-sm ms-2" onClick={handleLogout}>Sair</button>
                 </li>
               </>
             ) : (
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/login">
-                  Login
-                </NavLink>
-              </li>
+              <li className="nav-item"><NavLink className="nav-link" to="/login">Login</NavLink></li>
             )}
           </ul>
         </div>
@@ -104,4 +67,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-

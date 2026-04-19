@@ -25,6 +25,7 @@ public class Usuario {
 
   private String conta;
   private String senha;
+  private String role = "USER"; // USER ou ADMIN
 
   @ManyToMany
   @JoinTable(name = "usuario_favoritos", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "produto_id"))

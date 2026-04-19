@@ -4,7 +4,7 @@ import {
 } from "@tanstack/react-query";
 import { Produto } from "../interface/Produto";
 import ResultadoPaginado from "../interface/ResultadoPaginado";
-import isErrorResponse from "../util/isErrorResponse";
+import { apiFetch } from "../util/api";
 
 interface QueryString {
   tamanho: string;
@@ -27,26 +27,16 @@ const useRecuperarProdutosPorSlugCategoriaComPaginacao = (
   const recuperarProdutosPorSlugCategoriaComPaginacao = async (
     queryStringComPagina: QueryStringComPagina
   ): Promise<ResultadoPaginado<Produto>> => {
-    const url = new URL(
-      `${API_BASE}/produtos/categoria/paginacao`
-    );
-    url.search = new URLSearchParams({
+    const params = new URLSearchParams({
       pagina: queryStringComPagina.pagina,
       tamanho: queryStringComPagina.tamanho,
       slugCategoria: queryStringComPagina.slugCategoria ?? "",
-    }).toString();
+    });
 
-    const response = await fetch(url.toString());
+    const response = await apiFetch(`/produtos/categoria/paginacao?${params}`);
 
     if (!response.ok) {
-      // Tenta extrair mensagem amigável do backend
-      const maybeError = await response.json().catch(() => null);
-      if (maybeError && isErrorResponse(maybeError)) {
-        throw new Error(maybeError.message);
-      }
-      throw new Error(
-        `Erro ${response.status} ao recuperar produtos com paginação`
-      );
+      throw new Error(`Erro ${response.status} ao recuperar produtos com paginação`);
     }
 
     return (await response.json()) as ResultadoPaginado<Produto>;

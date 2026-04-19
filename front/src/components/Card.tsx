@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import Produto from "../interface/Produto";
-import type { ProdutoComQuantidade } from '../hooks/useCarrinho.ts'
-import { ProdCarrinho } from "../pages/CardsPorSlugCategoriaPage";
+import type { ProdutoComQuantidade } from "../hooks/useCarrinho";
+import { apiFetch } from "../util/api";
+import { getUsuario } from "../hooks/useAuth";
 
 interface Props {
   produto: Produto;
@@ -11,42 +12,31 @@ interface Props {
 }
 
 const Card = ({ produto, adicionarProduto, subtrairProduto, produtoNoCarrinho }: Props) => {
-  const usuarioLogado = JSON.parse(localStorage.getItem("usuario") || "null");
-  const [favoritado, setFavoritado] = useState<boolean>(false);
+  const usuarioLogado = getUsuario();
+  const [favoritado, setFavoritado] = useState(false);
 
   useEffect(() => {
-    if (usuarioLogado) {
-      fetch(`http://localhost:8080/usuarios/${usuarioLogado.id}/favoritos`)
-        .then(res => res.json())
-        .then((produtosFavoritos: Produto[]) => {
-          const estaFavoritado = produtosFavoritos.some((p) => p.id === produto.id);
-          setFavoritado(estaFavoritado);
-        });
-    }
-  }, [usuarioLogado, produto.id]);
+    if (!usuarioLogado) return;
+    apiFetch("/usuarios/favoritos")
+      .then((res) => res.json())
+      .then((produtosFavoritos: Produto[]) => {
+        setFavoritado(produtosFavoritos.some((p) => p.id === produto.id));
+      })
+      .catch(() => {});
+  }, [produto.id]);
 
   const alternarFavorito = async () => {
-    if (!usuarioLogado) {
-      console.log("Usuário não está logado");
-      return
-    };
-
+    if (!usuarioLogado) return;
     const metodo = favoritado ? "DELETE" : "POST";
-    const url = `http://localhost:8080/usuarios/${usuarioLogado.id}/favoritos/${produto.id}`;
-
     try {
-      const resp = await fetch(url, { method: metodo });
+      const resp = await apiFetch(`/usuarios/favoritos/${produto.id}`, { method: metodo });
       if (resp.ok) {
         setFavoritado(!favoritado);
-      } else {
-        const erro = await resp.text();
-        alert("Erro ao alterar favorito: " + erro);
       }
-    } catch (error) {
+    } catch {
       alert("Erro ao conectar com servidor");
     }
   };
-
 
   return (
     <div className="card h-100 border-0">
@@ -57,6 +47,7 @@ const Card = ({ produto, adicionarProduto, subtrairProduto, produtoNoCarrinho }:
             onClick={alternarFavorito}
             className="btn p-1 position-absolute top-0 end-0 m-2 bg-white border rounded-circle"
             style={{ width: "32px", height: "32px" }}
+            aria-label={favoritado ? "Remover dos favoritos" : "Adicionar aos favoritos"}
           >
             <img
               src={`/icons/${favoritado ? "heart-fill.svg" : "heart.svg"}`}
@@ -89,10 +80,13 @@ const Card = ({ produto, adicionarProduto, subtrairProduto, produtoNoCarrinho }:
             <button onClick={() => adicionarProduto(produto)} type="button" className="btn btn-secondary btn-sm">+</button>
           </div>
         ) : (
-          <button onClick={() => adicionarProduto(produto)} type="button" className="btn btn-success btn-sm w-100">Comprar</button>
+          <button onClick={() => adicionarProduto(produto)} type="button" className="btn btn-success btn-sm w-100">
+            Comprar
+          </button>
         )}
       </div>
     </div>
   );
 };
+
 export default Card;

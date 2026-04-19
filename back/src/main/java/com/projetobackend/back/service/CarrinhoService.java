@@ -3,6 +3,8 @@ package com.projetobackend.back.service;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ import com.projetobackend.back.repository.UsuarioRepository;
 @Service
 @Transactional
 public class CarrinhoService {
+
+  private static final Logger log = LoggerFactory.getLogger(CarrinhoService.class);
 
   @Autowired
   private CarrinhoRepository carrinhoRepository;
@@ -58,7 +62,7 @@ public class CarrinhoService {
       item.setProduto(produto);
       item.setPrecoUnitario(produto.getPreco());
       item.setQuantidade(qtd);
-      System.out.println("Adicionando novo item ao carrinho: " + item.getProduto().getNome());
+      log.debug("Adicionando novo item ao carrinho: {}", item.getProduto().getNome());
       carrinho.getItens().add(item);
     } else {
       item.setQuantidade(item.getQuantidade() + qtd);

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import type { Produto } from "../interface/Produto";
 import CardsPlaceholderPage from "./CardsPlaceHolder";
 import useCarrinho from "../hooks/useCarrinho";
+import { getUsuario } from "../hooks/useAuth";
 
 export interface ProdCarrinho {
   idProduto: number;
@@ -57,17 +58,11 @@ const CardsPorSlugCategoriaPage = () => {
 
 
 
-  console.log("data:", data);
-  console.log("data.pages", data?.pages);
-  console.log("carregandoProdutos:", carregandoProdutos);
-  console.log("carregandoCarrinho:", carregandoCarrinho);
-  if (carregandoProdutos || carregandoCarrinho) return <CardsPlaceholderPage />; // Adicionar placeholder
+  if (carregandoProdutos || carregandoCarrinho) return <CardsPlaceholderPage />;
   if (errorProdutos) return <p>Erro ao carregar produtos</p>;
   if (erroCarrinho) return <p>Erro ao carregar carrinho</p>;
 
-  console.log("produtosCarrinho:", produtosCarrinho);
-  const usuarioLogado = JSON.parse(localStorage.getItem("usuario") || "null");
-  console.log(usuarioLogado);
+  const usuarioLogado = getUsuario();
 
   return (
     <InfiniteScroll
